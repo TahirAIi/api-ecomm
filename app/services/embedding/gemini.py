@@ -39,7 +39,7 @@ class GeminiEmbeddingService(EmbeddingService):
         config = genai.types.EmbedContentConfig(
             task_type="retrieval_query", output_dimensionality=self._dimension
         )
-        return self.generate_embedding({"text": text}, "retrieval_query", config)
+        return self.generate_embedding({"text": text, "title": ""}, "retrieval_query", config)
 
     def get_embedding_dimension(self) -> int:
         return self._dimension

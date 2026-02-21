@@ -9,10 +9,10 @@ if str(project_root) not in sys.path:
 
 import typer
 from app.db.session import SessionLocal
-from app.services.user import user_service
+from app.services.user import get_user_service
 from app.schemas.user import UserCreate
-from app.services.product import product_service
-from app.services.category import category_service
+from app.services.product import get_product_service
+from app.services.category import get_category_service
 from app.schemas.product import ProductCreate
 from app.schemas.category import CategoryCreate
 from app.models.product import Product
@@ -33,6 +33,7 @@ def create_superuser(
     """Create a superuser."""
     db = SessionLocal()
     try:
+        user_service = get_user_service()
         user = user_service.create(
             db,
             obj_in=UserCreate(
@@ -49,6 +50,9 @@ def populate_dummy_data():
     """Populate database with dummy products and categories from local data.json."""
     db = SessionLocal()
     try:
+        product_service = get_product_service()
+        category_service = get_category_service()
+
         # Clean up existing data
         typer.echo("Cleaning up existing data...")
         # Delete products and categories; association entries will be removed via cascade
@@ -112,10 +116,9 @@ def populate_dummy_data():
                 name=title,
                 price=price,
                 description=description,
-                images=[],  # No images in data.json
+                images=[],
                 category_uuids=[category_mapping[key]],
                 stock_quantity=stock,
-                size_guide="Standard sizing applies",
             )
             created_product = product_service.create(db, obj_in=product_in)
             typer.echo(f"Created product: {created_product.name}")
@@ -240,10 +243,11 @@ def test_semantic_search(
     limit: int = typer.Option(10, help="Number of results to return"),
 ):
     """Test semantic search functionality."""
-    from app.services.semantic_search import semantic_search_service
+    from app.services.semantic_search import get_semantic_search_service
 
     db = SessionLocal()
     try:
+        semantic_search_service = get_semantic_search_service()
         typer.echo(f"Searching for: '{query}'...")
 
         results, total = semantic_search_service.search(db=db, query=query, limit=limit)

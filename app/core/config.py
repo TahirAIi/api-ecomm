@@ -1,8 +1,6 @@
-from pydantic_settings import BaseSettings
-import os
-from dotenv import load_dotenv
+from typing import Optional
 
-load_dotenv()
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -11,39 +9,41 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # CORS Configuration
-    BACKEND_CORS_ORIGINS: str = os.getenv("BACKEND_CORS_ORIGINS", "")
+    BACKEND_CORS_ORIGINS: str = ""
 
     # Database Configuration
-    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER")
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB")
-    SQLALCHEMY_DATABASE_URI: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+    POSTGRES_SERVER: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
 
     # JWT Configuration
-    JWT_SECRET_KEY: str = os.getenv("SECRET_KEY")
+    JWT_SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    FIRST_SUPERUSER: str = os.getenv("FIRST_SUPERUSER")
-    FIRST_SUPERUSER_PASSWORD: str = os.getenv("FIRST_SUPERUSER_PASSWORD")
+    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_PASSWORD: str
 
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
+    GEMINI_API_KEY: Optional[str] = None
 
-    DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY")
+    DEEPSEEK_API_KEY: Optional[str] = None
 
-    MILVUS_URI: str = os.getenv("MILVUS_URI")
-    MILVUS_TOKEN: str = os.getenv("MILVUS_TOKEN")
-    MILVUS_COLLECTION_NAME: str = os.getenv(
-        "MILVUS_COLLECTION_NAME", "product_embeddings"
-    )
+    MILVUS_URI: Optional[str] = None
+    MILVUS_TOKEN: Optional[str] = None
+    MILVUS_COLLECTION_NAME: str = "product_embeddings"
 
-    REDIS_URL: str = os.getenv("REDIS_URL")
+    REDIS_URL: Optional[str] = None
 
-    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL")
+    CELERY_BROKER_URL: Optional[str] = None
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
 
     class Config:
         case_sensitive = True
+        env_file = ".env"
 
 
 settings = Settings()

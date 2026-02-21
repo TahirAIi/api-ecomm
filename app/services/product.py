@@ -54,8 +54,6 @@ class ProductService:
         min_price: Optional[float] = None,
         max_price: Optional[float] = None,
         sort_by: Optional[str] = None,
-        colors: Optional[List[str]] = None,
-        sizes: Optional[List[str]] = None,
         in_stock: Optional[bool] = None,
     ) -> Tuple[List[ProductModel], int]:
         return self.repository.get_products(
@@ -67,8 +65,6 @@ class ProductService:
             min_price=min_price,
             max_price=max_price,
             sort_by=sort_by,
-            colors=colors,
-            sizes=sizes,
             in_stock=in_stock,
         )
 

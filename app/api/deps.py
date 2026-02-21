@@ -1,4 +1,4 @@
-from typing import Generator, Optional
+from typing import Generator
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
@@ -15,8 +15,8 @@ reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/log
 
 
 def get_db() -> Generator:
+    db = SessionLocal()
     try:
-        db = SessionLocal()
         yield db
     finally:
         db.close()

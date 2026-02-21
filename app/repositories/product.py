@@ -41,8 +41,10 @@ class ProductRepository:
         db.refresh(db_obj)
         return db_obj
 
-    def delete(self, db: Session, *, uuid: UUID) -> Product:
+    def delete(self, db: Session, *, uuid: UUID) -> Optional[Product]:
         obj = db.query(self.model).filter(self.model.uuid == uuid).first()
+        if obj is None:
+            return None
         db.delete(obj)
         db.commit()
         return obj
@@ -70,8 +72,6 @@ class ProductRepository:
                 query = query.order_by(Product.price.desc())
             elif sort_by == "newest":
                 query = query.order_by(Product.created_at.desc())
-            elif sort_by == "top_rated":
-                query = query.order_by(Product.average_rating.desc())
 
         total = query.count()
         products = query.offset(skip).limit(limit).all()
@@ -89,8 +89,6 @@ class ProductRepository:
         min_price: Optional[float] = None,
         max_price: Optional[float] = None,
         sort_by: Optional[str] = None,
-        colors: Optional[List[str]] = None,
-        sizes: Optional[List[str]] = None,
         in_stock: Optional[bool] = None,
     ) -> Tuple[List[Product], int]:
         query = db.query(self.model)
@@ -104,12 +102,11 @@ class ProductRepository:
             query = query.filter(self.model.price >= min_price)
         if max_price is not None:
             query = query.filter(self.model.price <= max_price)
-        if colors:
-            query = query.filter(self.model.colors.contains(colors))
-        if sizes:
-            query = query.filter(self.model.sizes.contains(sizes))
-        if in_stock:
-            query = query.filter(self.model.stock_quantity > 0)
+        if in_stock is not None:
+            if in_stock:
+                query = query.filter(self.model.stock_quantity > 0)
+            else:
+                query = query.filter(self.model.stock_quantity == 0)
 
         # Apply sorting
         if sort_by == "price_asc":
@@ -118,8 +115,6 @@ class ProductRepository:
             query = query.order_by(self.model.price.desc())
         elif sort_by == "newest":
             query = query.order_by(self.model.created_at.desc())
-        elif sort_by == "top_rated":
-            query = query.order_by(self.model.rating.desc())
 
         # Get total count before pagination
         total = query.count()

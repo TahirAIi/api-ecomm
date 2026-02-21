@@ -32,7 +32,12 @@ class ProductCreate(ProductBase):
     category_uuids: List[UUID4]
 
 
-class ProductUpdate(ProductBase):
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    stock_quantity: Optional[int] = None
+    images: Optional[List[ProductImage]] = None
     category_uuids: Optional[List[UUID4]] = None
 
 

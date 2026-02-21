@@ -11,13 +11,13 @@ class EmbeddingService(ABC):
 
     @abstractmethod
     def generate_embedding(
-        self, text: str, task_type: str = "retrieval_document"
+        self, text: dict, task_type: str = "retrieval_document"
     ) -> List[float]:
         """
         Generate an embedding vector for a single text.
 
         Args:
-            text: The text to embed
+            text: A dict with "text" and "title" keys
             task_type: Optional task type (e.g., "retrieval_document" for products, "retrieval_query" for queries)
 
         Returns:

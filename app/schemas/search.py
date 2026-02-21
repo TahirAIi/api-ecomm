@@ -5,6 +5,7 @@ from app.schemas.product import Product
 
 class SearchResult(BaseModel):
     product: Product
+    score: float
 
 
 class SearchResponse(BaseModel):

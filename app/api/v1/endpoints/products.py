@@ -5,7 +5,6 @@ from app.api.deps import get_db, get_current_active_user
 from app.schemas.product import Product, ProductCreate, ProductUpdate, ProductList
 from app.services.product import get_product_service
 from uuid import UUID
-import urllib.parse
 from app.services.product import ProductService
 
 router = APIRouter()
@@ -48,8 +47,6 @@ def list_products(
     sort_by: Optional[str] = Query(
         None, regex="^(price_asc|price_desc|newest|top_rated)$"
     ),
-    colors: Optional[List[str]] = Query(None),
-    sizes: Optional[List[str]] = Query(None),
     in_stock: Optional[bool] = None,
     product_service: ProductService = Depends(get_product_service),
 ) -> Any:
@@ -58,12 +55,10 @@ def list_products(
         skip=skip,
         limit=limit,
         name=name,
-        category=urllib.parse.unquote(category if category else ""),
+        category=category,
         min_price=min_price,
         max_price=max_price,
         sort_by=sort_by,
-        colors=colors,
-        sizes=sizes,
         in_stock=in_stock,
     )
 

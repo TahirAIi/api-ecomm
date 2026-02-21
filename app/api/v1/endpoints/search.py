@@ -8,7 +8,6 @@ from app.services.semantic_search import (
 )
 from app.schemas.search import SearchResponse, SearchResult
 import logging
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -35,14 +34,14 @@ def semantic_search(
         formatted_results = [
             SearchResult(
                 product=result["product"],
+                score=result["score"],
             )
             for result in search_results
         ]
-        print(f"-----------Formatted results at {time.time()}")
         return SearchResponse(
             query=query, total_results=total, results=formatted_results
         )
 
     except Exception as e:
         logger.error(f"Error in semantic search endpoint: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Search failed")
