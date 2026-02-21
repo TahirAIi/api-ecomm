@@ -72,7 +72,7 @@ class ProductService:
         """Create a new product with categories."""
         category_uuids = obj_in.category_uuids
 
-        obj_dict = obj_in.model_dump(exclude={"category_uuids"})
+        obj_dict = obj_in.model_dump(exclude={"category_uuids", "images"})
 
         db_obj = ProductModel(**obj_dict)
 

@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from app.api.deps import get_db, get_current_active_user
+from app.api.deps import get_db, get_current_active_superuser
 from app.schemas.product import Product, ProductCreate, ProductUpdate, ProductList
 from app.services.product import get_product_service
 from uuid import UUID
@@ -81,12 +81,12 @@ def get_product(
     return product
 
 
-@router.post("", response_model=Product)
+@router.post("", response_model=Product, status_code=201)
 def create_product(
     *,
     db: Session = Depends(get_db),
     product_in: ProductCreate,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: Any = Depends(get_current_active_superuser),
     product_service: ProductService = Depends(get_product_service)
 ) -> Any:
     product = product_service.create(db=db, obj_in=product_in)
@@ -99,7 +99,7 @@ def update_product(
     db: Session = Depends(get_db),
     uuid: UUID,
     product_in: ProductUpdate,
-    current_user: Any = Depends(get_current_active_user),
+    current_user: Any = Depends(get_current_active_superuser),
     product_service: ProductService = Depends(get_product_service)
 ) -> Any:
     product = product_service.get_by_uuid(db=db, uuid=uuid)

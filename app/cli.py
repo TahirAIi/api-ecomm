@@ -37,8 +37,9 @@ def create_superuser(
         user = user_service.create(
             db,
             obj_in=UserCreate(
-                email=email, password=password, full_name=full_name, is_superuser=True
+                email=email, password=password, full_name=full_name
             ),
+            is_superuser=True,
         )
         typer.echo(f"Superuser created successfully! UUID: {user.uuid}")
     finally:

@@ -41,7 +41,7 @@ def login(
         db, email=form_data.username, password=form_data.password
     )
     if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(user.uuid, expires_delta=access_token_expires)
@@ -70,7 +70,7 @@ def update_password(
     if not user_service.authenticate(
         db, email=current_user.email, password=password_data.current_password
     ):
-        raise HTTPException(status_code=400, detail="Incorrect password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect password")
     user_service.update_password(
         db, user=current_user, new_password=password_data.new_password
     )

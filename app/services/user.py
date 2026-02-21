@@ -15,11 +15,12 @@ class UserService:
     def get_by_uuid(self, db: Session, uuid: UUID) -> Optional[UserModel]:
         return db.query(self.model).filter(self.model.uuid == uuid).first()
 
-    def create(self, db: Session, *, obj_in: UserCreate) -> UserModel:
+    def create(self, db: Session, *, obj_in: UserCreate, is_superuser: bool = False) -> UserModel:
         db_obj = UserModel(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
+            is_superuser=is_superuser,
         )
         db.add(db_obj)
         db.commit()
